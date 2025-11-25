@@ -9,7 +9,6 @@ CREATE DATABASE "criação_dw";
 
 ============================
 
-===========================
 EXERCÍCIO 2 (PL/pgSQL)
 CRIAÇÃO DAS TABELAS DIMENSÃO
 
@@ -34,3 +33,22 @@ CRIAÇÃO DAS TABELAS DIMENSÃO
 --     publicadora_key SERIAL PRIMARY KEY,
 --     nome_publicadora VARCHAR(100) UNIQUE NOT NULL
 -- );
+
+===========================
+EXERCÍCIO 3 (PL/pgSQL)
+CRIAÇÃO DA TABELA FATO
+
+
+-- CREATE TABLE IF NOT EXISTS fato_vendas (
+-- id_venda SERIAL PRIMARY KEY,
+-- id_jogo INTEGER REFERENCES dim_jogos(id_jogo),
+-- id_plataforma INTEGER REFERENCES dim_plataforma(id_plataforma), 
+-- genero_key INTEGER REFERENCES dim_genero(genero_key),
+-- publicadora_key INTEGER REFERENCES dim_publicadora(publicadora_key),
+-- vendas_NA NUMERIC(100,2),
+-- vendas_EU NUMERIC(100,2), 
+-- vendas_JP NUMERIC(100,2),
+-- vendas_global NUMERIC(100,2),
+-- vendas_other NUMERIC(100,2)
+-- -- );
+
