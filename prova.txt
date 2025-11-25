@@ -129,3 +129,24 @@ for _, row in df_jogos.iterrows():
         "INSERT INTO dim_jogos (id_jogo, nome_jogo, genero, ano) VALUES (%s, %s, %s, %s);",
         (row['id_jogo'], row['Name'], row['Genre'], int(row['Year']) if pd.notna(row['Year']) else None)
     )
+
+===========================
+EXERCÍCIO 8 (PYTHON)
+CADASTRO DE DADOS NA TABELA FATO
+
+# Inserir fato_vendas
+for _, row in df.iterrows():
+    cursor.execute(
+        """
+        INSERT INTO fato_vendas (
+            id_jogo, id_plataforma, genero_key, publicadora_key, vendas_NA, vendas_EU, vendas_JP, vendas_global, vendas_other
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+        """,
+        (
+            row['id_jogo'], row['id_plataforma'], row['genero_key'], row['publicadora_key'], row['NA_Sales'], row['EU_Sales'], row['JP_Sales'], row['Global_Sales'], row['Other_Sales']
+        )
+    )
+
+conn.commit()
+cursor.close()
+conn.close()
