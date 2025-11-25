@@ -60,3 +60,20 @@ import pandas as pd
 
 df = pd.read_csv('/home/Murilo/Downloads/archive (3)/vgsales.csv')
 print(df.head())
+
+===========================
+EXERCÍCIO 5 (PYTHON)
+TRANSFORMAÇÕES NECESSÁRIAS, INCLUINDO GERAÇÃO DE CHAVES
+
+milhao = 1_000_000
+cols_vendas = ["NA_Sales", "EU_Sales", "JP_Sales", "Other_Sales", "Global_Sales"]
+
+# convertendo e multiplica por 1 milhão
+for col in cols_vendas:
+    df[f"vendas_{col.split('_')[0].lower()}"] = (
+        pd.to_numeric(df[col], errors='coerce').fillna(0) * milhao
+    )
+
+df["id_jogo"] = df["Name"].astype('category').cat.codes + 1
+df["id_plataforma"] = df["Platform"].astype('category').cat.codes + 1
+df["id_publisher"] = df["Publisher"].astype('category').cat.codes + 1
