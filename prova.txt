@@ -77,3 +77,15 @@ for col in cols_vendas:
 df["id_jogo"] = df["Name"].astype('category').cat.codes + 1
 df["id_plataforma"] = df["Platform"].astype('category').cat.codes + 1
 df["id_publisher"] = df["Publisher"].astype('category').cat.codes + 1
+
+===========================
+EXERCÍCIO 6 (PYTHON)
+CONEXÃO COM O BANCO (PYTHON)
+
+import psycopg2
+from psycopg2 import Error
+
+db_host = "127.0.0.1"
+db_name = "criação_dw"
+db_user = postgres
+db_pass = 123456
