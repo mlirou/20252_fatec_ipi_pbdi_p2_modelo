@@ -52,3 +52,11 @@ CRIAÇÃO DA TABELA FATO
 -- vendas_other NUMERIC(100,2)
 -- -- );
 
+===========================
+EXERCÍCIO 4 (PYTHON)
+CARGA DO ARQUIVO CSV COM PANDAS
+
+import pandas as pd
+
+df = pd.read_csv('/home/Murilo/Downloads/archive (3)/vgsales.csv')
+print(df.head())
