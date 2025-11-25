@@ -1,97 +1,121 @@
-COPIE E COLE A SOLUÇÃO DE CADA EXERCÍCIO A SEGUIR, NO ESPAÇO RESERVADO PARA CADA UM
-NÃO É PERMITIDO APAGAR CARACTERES OS CARACTERES SEPARADORES (===) E/OU ENUNCIADOS DE EXERCÍCIOS
-
 ===========================
 EXERCÍCIO 1 (PL/pgSQL)
 CRIAÇÃO DO DATABASE
 
-CREATE DATABASE "criação_dw";
+CREATE DATABASE "criacao_dw";
 
-============================
-
+===========================
 EXERCÍCIO 2 (PL/pgSQL)
 CRIAÇÃO DAS TABELAS DIMENSÃO
 
--- CREATE TABLE dim_plataforma (
--- id_plataforma INTEGER PRIMARY KEY,
--- plataforma VARCHAR (100)
--- ); 
+CREATE TABLE dim_ano (
+ano_key DATE PRIMARY KEY,
+nome VARCHAR(100)
+);
 
--- CREATE TABLE dim_jogos (
--- id_jogo INTEGER PRIMARY KEY,
--- nome_jogo VARCHAR (100),
--- genero VARCHAR (100),
--- ano INT
--- ); 
+CREATE TABLE dim_jogos (
+id_jogo INTEGER PRIMARY KEY,
+nome_jogo VARCHAR (150),
+genero VARCHAR (150),
+ano INT
+); 
 
--- CREATE TABLE dim_genero (
---     genero_key SERIAL PRIMARY KEY,
---     nome_genero VARCHAR(50) UNIQUE NOT NULL
--- );
+CREATE TABLE dim_plataforma (
+id_plataforma INTEGER PRIMARY KEY,
+plataforma VARCHAR (150)
+); 
+
+CREATE TABLE dim_genero (
+    genero_key SERIAL PRIMARY KEY,
+    nome_genero VARCHAR(100) UNIQUE NOT NULL
+);
  
--- CREATE TABLE dim_publicadora (
---     publicadora_key SERIAL PRIMARY KEY,
---     nome_publicadora VARCHAR(100) UNIQUE NOT NULL
--- );
+CREATE TABLE dim_publicadora (
+    publicadora_key SERIAL PRIMARY KEY,
+    nome_publicadora VARCHAR(150) UNIQUE NOT NULL
+);
 
 ===========================
 EXERCÍCIO 3 (PL/pgSQL)
 CRIAÇÃO DA TABELA FATO
 
-
--- CREATE TABLE IF NOT EXISTS fato_vendas (
--- id_venda SERIAL PRIMARY KEY,
--- id_jogo INTEGER REFERENCES dim_jogos(id_jogo),
--- id_plataforma INTEGER REFERENCES dim_plataforma(id_plataforma), 
--- genero_key INTEGER REFERENCES dim_genero(genero_key),
--- publicadora_key INTEGER REFERENCES dim_publicadora(publicadora_key),
--- vendas_NA NUMERIC(100,2),
--- vendas_EU NUMERIC(100,2), 
--- vendas_JP NUMERIC(100,2),
--- vendas_global NUMERIC(100,2),
--- vendas_other NUMERIC(100,2)
--- -- );
+CREATE TABLE fato_vendas (
+id_venda SERIAL PRIMARY KEY,
+id_jogo INTEGER REFERENCES dim_jogos(id_jogo),
+id_plataforma INTEGER REFERENCES dim_plataforma(id_plataforma), 
+genero_key INTEGER REFERENCES dim_genero(genero_key),
+publicadora_key INTEGER REFERENCES dim_publicadora(publicadora_key),
+vendas_NA NUMERIC(100,2),
+vendas_EU NUMERIC(100,2), 
+vendas_JP NUMERIC(100,2),
+vendas_global NUMERIC(100,2),
+vendas_other NUMERIC(100,2)
+); 
 
 ===========================
 EXERCÍCIO 4 (PYTHON)
 CARGA DO ARQUIVO CSV COM PANDAS
 
 import pandas as pd
+import psycopg2
 
-df = pd.read_csv('/home/Murilo/Downloads/archive (3)/vgsales.csv')
+df = pd.read_csv("data/vgsales.csv")
 print(df.head())
 
 ===========================
 EXERCÍCIO 5 (PYTHON)
 TRANSFORMAÇÕES NECESSÁRIAS, INCLUINDO GERAÇÃO DE CHAVES
 
-milhao = 1_000_000
-cols_vendas = ["NA_Sales", "EU_Sales", "JP_Sales", "Other_Sales", "Global_Sales"]
+df['Year'] = pd.to_numeric(df['Year'], errors='coerce')
 
-# convertendo e multiplica por 1 milhão
-for col in cols_vendas:
-    df[f"vendas_{col.split('_')[0].lower()}"] = (
-        pd.to_numeric(df[col], errors='coerce').fillna(0) * milhao
-    )
+# Criação das dimensões
+# dim_ano
+df_ano = df[['Year']].drop_duplicates().dropna().reset_index(drop=True)
+df_ano['ano_key'] = pd.to_datetime(df_ano['Year'].astype(int).astype(str) + '-01-01')
+df_ano['nome'] = df_ano['Year'].astype(int).astype(str)
 
-df["id_jogo"] = df["Name"].astype('category').cat.codes + 1
-df["id_plataforma"] = df["Platform"].astype('category').cat.codes + 1
-df["id_publisher"] = df["Publisher"].astype('category').cat.codes + 1
+# dim_plataforma
+df_plataforma = df[['Platform']].drop_duplicates().reset_index(drop=True)
+df_plataforma['id_plataforma'] = df_plataforma.index + 1
+
+# dim_genero
+df_genero = df[['Genre']].drop_duplicates().reset_index(drop=True)
+df_genero['genero_key'] = df_genero.index + 1
+
+# dim_publicadora
+df_publicadora = df[['Publisher']].drop_duplicates().reset_index(drop=True)
+df_publicadora['publicadora_key'] = df_publicadora.index + 1
+
+# dim_jogos
+df_jogos = df[['Name', 'Genre', 'Year']].drop_duplicates().reset_index(drop=True)
+df_jogos['id_jogo'] = df_jogos.index + 1
+
+# Mapeamento para fato
+jogo_map = df_jogos.set_index(['Name', 'Genre', 'Year'])['id_jogo']
+plat_map = df_plataforma.set_index('Platform')['id_plataforma']
+gen_map = df_genero.set_index('Genre')['genero_key']
+pub_map = df_publicadora.set_index('Publisher')['publicadora_key']
+
+# Para fato, criar keys
+df['id_jogo'] = df.apply(lambda row: jogo_map.get((row['Name'], row['Genre'], row['Year']), None), axis=1)
+df['id_plataforma'] = df['Platform'].map(plat_map)
+df['genero_key'] = df['Genre'].map(gen_map)
+df['publicadora_key'] = df['Publisher'].map(pub_map)
 
 ===========================
 EXERCÍCIO 6 (PYTHON)
 CONEXÃO COM O BANCO (PYTHON)
 
-import psycopg2
-from psycopg2 import Error
+conn = psycopg2.connect(
+    host='localhost',
+    database='prova',
+    user='postgres',
+    password='password'
+)
 
-db_host = "127.0.0.1"
-db_name = "criação_dw"
-db_user = postgres
-db_pass = 123456
+cursor = conn.cursor()
 
 ===========================
-
 EXERCÍCIO 7 (PYTHON)
 CADASTRO DE DIMENSÕES
 
