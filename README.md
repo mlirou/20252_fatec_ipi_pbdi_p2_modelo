@@ -7,8 +7,6 @@
 
 | Nome completo | RA |
 |:--------------|:---|
-| Murilo Santos               |     |
-|                |     |
-|                |     |
-|                |     |
-|                |     |
+| Murilo Santos | 2041382411043 |
+| Rayssa Santos | 2041382421036 |
+| Vanessa Ribeiro | 2041382421006 |
