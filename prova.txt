@@ -7,32 +7,30 @@ CRIAÇÃO DO DATABASE
 
 CREATE DATABASE "criação_dw";
 
-
+============================
 
 ===========================
 EXERCÍCIO 2 (PL/pgSQL)
 CRIAÇÃO DAS TABELAS DIMENSÃO
 
-===========================
-EXERCÍCIO 3 (PL/pgSQL)
-CRIAÇÃO DA TABELA FATO
+-- CREATE TABLE dim_plataforma (
+-- id_plataforma INTEGER PRIMARY KEY,
+-- plataforma VARCHAR (100)
+-- ); 
 
-===========================
-EXERCÍCIO 4 (PYTHON)
-CARGA DO ARQUIVO CSV COM PANDAS
+-- CREATE TABLE dim_jogos (
+-- id_jogo INTEGER PRIMARY KEY,
+-- nome_jogo VARCHAR (100),
+-- genero VARCHAR (100),
+-- ano INT
+-- ); 
 
-===========================
-EXERCÍCIO 5 (PYTHON)
-TRANSFORMAÇÕES NECESSÁRIAS, INCLUINDO GERAÇÃO DE CHAVES
-
-===========================
-EXERCÍCIO 6 (PYTHON)
-CONEXÃO COM O BANCO (PYTHON)
-
-===========================
-EXERCÍCIO 7 (PYTHON)
-CADASTRO DE DIMENSÕES
-
-===========================
-EXERCÍCIO 8 (PYTHON)
-CADASTRO DE DADOS NA TABELA FATO
+-- CREATE TABLE dim_genero (
+--     genero_key SERIAL PRIMARY KEY,
+--     nome_genero VARCHAR(50) UNIQUE NOT NULL
+-- );
+ 
+-- CREATE TABLE dim_publicadora (
+--     publicadora_key SERIAL PRIMARY KEY,
+--     nome_publicadora VARCHAR(100) UNIQUE NOT NULL
+-- );
