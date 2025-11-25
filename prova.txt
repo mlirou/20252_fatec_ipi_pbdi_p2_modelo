@@ -89,3 +89,43 @@ db_host = "127.0.0.1"
 db_name = "criação_dw"
 db_user = postgres
 db_pass = 123456
+
+===========================
+
+EXERCÍCIO 7 (PYTHON)
+CADASTRO DE DIMENSÕES
+
+# Inserir dim_ano
+for _, row in df_ano.iterrows():
+    cursor.execute(
+        "INSERT INTO dim_ano (ano_key, nome) VALUES (%s, %s);",
+        (row['ano_key'], row['nome'])
+    )
+
+# Inserir dim_plataforma
+for _, row in df_plataforma.iterrows():
+    cursor.execute(
+        "INSERT INTO dim_plataforma (id_plataforma, plataforma) VALUES (%s, %s);",
+        (row['id_plataforma'], row['Platform'])
+    )
+
+# Inserir dim_genero
+for _, row in df_genero.iterrows():
+    cursor.execute(
+        "INSERT INTO dim_genero (genero_key, nome_genero) VALUES (%s, %s);",
+        (row['genero_key'], row['Genre'])
+    )
+
+# Inserir dim_publicadora
+for _, row in df_publicadora.iterrows():
+    cursor.execute(
+        "INSERT INTO dim_publicadora (publicadora_key, nome_publicadora) VALUES (%s, %s);",
+        (row['publicadora_key'], row['Publisher'])
+    )
+
+# Inserir dim_jogos
+for _, row in df_jogos.iterrows():
+    cursor.execute(
+        "INSERT INTO dim_jogos (id_jogo, nome_jogo, genero, ano) VALUES (%s, %s, %s, %s);",
+        (row['id_jogo'], row['Name'], row['Genre'], int(row['Year']) if pd.notna(row['Year']) else None)
+    )
